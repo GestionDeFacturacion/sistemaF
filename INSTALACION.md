@@ -444,7 +444,6 @@ npm run dev
 ```powershell
 php artisan storage:link
 ```
-Si persiste, borra la carpeta `public/storage` manualment y ejecuta el comando de nuevo.
 
 ### Tenant no carga (404)
 
