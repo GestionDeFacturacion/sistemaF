@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Servicio de MySQL 5.7
+  mysql:
+    image: mysql:5.7
+    container_name: facturadorpro5_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tenancy
+      MYSQL_USER: facturador
+      MYSQL_PASSWORD: facturador123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - facturador_network
+
+  # Servicio de Apache + PHP 7.4
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: facturadorpro5_app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+    environment:
+      DB_CONNECTION: system
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: tenancy
+      DB_USERNAME: facturador
+      DB_PASSWORD: facturador123
+    networks:
+      - facturador_network
+    command: >
+      bash -c "
+      composer install --no-interaction --prefer-dist --optimize-autoloader &&
+      php artisan config:cache &&
+      apache2-foreground
+      "
+
+networks:
+  facturador_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
