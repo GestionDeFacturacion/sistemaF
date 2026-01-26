@@ -268,14 +268,15 @@
         public function totalsByItem(Request $request) {
 
             $records = $this->getRecordsDispachesItem($request->all())->get()->groupBy('item_id');
-
+            $first_item = $row->first();
+            $relation_item = $first_item ? $first_item->relation_item : null;
+        
             return $records->map(function ($row, $key) {
-
-                return [
+            return [
                     'item_id'           => $key,
-                    'item_internal_id'  => $row->first()->relation_item->internal_id,
-                    'item_unit_type_id' => $row->first()->relation_item->unit_type_id,
-                    'item_description'  => $row->first()->item->description,
+                    'item_internal_id'  => $relation_item ? $relation_item->internal_id : '',
+                    'item_unit_type_id' => $relation_item ? $relation_item->unit_type_id : '',
+                    'item_description'  => ($first_item && $first_item->item) ? $first_item->item->description : '',
                     'quantity'          => number_format($row->sum('quantity'), 4, '.', ''),
                 ];
             });
