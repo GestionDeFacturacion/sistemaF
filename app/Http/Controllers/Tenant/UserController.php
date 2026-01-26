@@ -74,7 +74,8 @@ class UserController extends Controller
             ['type' => 'seller', 'description' => 'Vendedor'],
         ];
 
-        $config_permission_to_edit_cpe = Configuration::select('permission_to_edit_cpe')->first()->permission_to_edit_cpe;
+        $configuration = Configuration::select('permission_to_edit_cpe')->first();
+        $config_permission_to_edit_cpe = $configuration ? $configuration->permission_to_edit_cpe : false;
         $zones = Zone::all();
 
         return compact('modules', 'establishments', 'types', 'documents', 'series', 'config_permission_to_edit_cpe','zones');

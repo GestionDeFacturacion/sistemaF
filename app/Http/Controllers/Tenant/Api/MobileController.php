@@ -136,7 +136,7 @@ class MobileController extends Controller
                             'aux_quantity' => 1,
                     'brand' => $row->brand->name,
                     'category' => $row->brand->name,
-                    'stock' => $row->unit_type_id!='ZZ' ? ItemWarehouse::where([['item_id', $row->id],['warehouse_id', $warehouse->id]])->first()->stock : '0',
+                    'stock' => $row->unit_type_id!='ZZ' ? (ItemWarehouse::where([['item_id', $row->id],['warehouse_id', $warehouse->id]])->first()->stock ?? 0) : '0',
                     'image' => $row->image != "imagen-no-disponible.jpg" ? url("/storage/uploads/items/" . $row->image) : url("/logo/" . $row->image),
 
                         ];
