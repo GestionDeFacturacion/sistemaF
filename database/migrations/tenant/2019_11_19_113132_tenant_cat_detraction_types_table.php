@@ -16,7 +16,7 @@ class TenantCatDetractionTypesTable extends Migration
     {
         
         Schema::create('cat_detraction_types', function (Blueprint $table) {
-            $table->string('id')->index();
+            $table->string('id')->primary();
             $table->boolean('active');
             $table->string('description');
             $table->decimal('percentage',6,2);

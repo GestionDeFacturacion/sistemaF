@@ -15,7 +15,7 @@ class TenantPaymentConditionsTable extends Migration
     public function up()
     {
         Schema::create('payment_conditions', function (Blueprint $table) {
-            $table->string('id')->index();
+            $table->string('id')->primary();
             $table->string('name');
             $table->integer('days')->default(0);
             $table->boolean('is_locked')->default(false);
