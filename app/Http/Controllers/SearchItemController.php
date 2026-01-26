@@ -784,7 +784,11 @@
             $brand = ($item->brand) ? "{$item->brand->name}" : "";
 
             if ($item->unit_type_id != 'ZZ') {
-                $warehouse_stock = ($item->warehouses && $warehouse) ? number_format($item->warehouses->where('warehouse_id', $warehouse->id)->first() != null ? $item->warehouses->where('warehouse_id', $warehouse->id)->first()->stock : 0, 2) : 0;
+                $warehouse_stock = 0;
+                if($item->warehouses && $warehouse){
+                    $item_warehouses = $item->warehouses->where('warehouse_id', $warehouse->id)->first();
+                    $warehouse_stock = $item_warehouses ? number_format($item_warehouses->stock, 2) : 0;
+                } 
                 $stock = ($item->warehouses && $warehouse) ? "{$warehouse_stock}" : "";
             } else {
                 $stock = '';
