@@ -555,7 +555,6 @@
                 }
             }
 
-
             $subDom = strtolower($request->input('subdomain'));
             $uuid = config('tenant.prefix_database') . '_' . $subDom;
             $fqdn = $subDom . '.' . config('tenant.app_url_base');
@@ -563,19 +562,27 @@
             $website = new Website();
             $hostname = new Hostname();
             $this->validateWebsite($uuid, $website);
+            
+            $token = str_random(50);
+
+            try { 
+                $website->uuid = $uuid;
+                app(WebsiteRepository::class)->create($website); # Creamos el website primero para obtener el ID
+            
+                $hostname->fqdn = $fqdn;
+                app(HostnameRepository::class)->attach($hostname, $website);
+            } catch (Exception $e) {
+                return [
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ];
+            } 
 
             DB::connection('system')->beginTransaction();
             try {
-                $website->uuid = $uuid;
-                app(WebsiteRepository::class)->create($website);
-                $hostname->fqdn = $fqdn;
-                app(HostnameRepository::class)->attach($hostname, $website);
-
                 $tenancy = app(Environment::class);
                 $tenancy->tenant($website);
-
-                $token = str_random(50);
-
+                
                 $client = new Client();
                 $client->hostname_id = $hostname->id;
                 $client->token = $token;
@@ -585,17 +592,22 @@
                 $client->plan_id = $request->input('plan_id');
                 $client->locked_emission = $request->input('locked_emission');
                 $client->save();
-
+                
                 DB::connection('system')->commit();
+                
             } catch (Exception $e) {
                 DB::connection('system')->rollBack();
-                app(HostnameRepository::class)->delete($hostname, true);
-                app(WebsiteRepository::class)->delete($website, true);
-
+                // Limpiar los recursos creados en caso de error
+                try {
+                    app(HostnameRepository::class)->delete($hostname, true);
+                    app(WebsiteRepository::class)->delete($website, true);
+                } catch (Exception $cleanupException) {
+                    \Log::error('Error al limpiar recursos: ' . $cleanupException->getMessage());
+                }
+                
                 return [
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ];
+                        'success' => false,
+                        'message' => $e->getMessage()];
             }
 
             DB::connection('tenant')->table('companies')->insert([
