@@ -16,11 +16,14 @@
         "jquery": "^3.4.1",
         "laravel-mix": "^3.0.0",
         "lodash": "^4.17.15",
-        "node-sass": "^4.14.1",
+        "sass": "~1.32.13",
         "popper.js": "^1.12",
         "sass-loader": "^7.3.1",
         "vue": "^2.5.7",
         "vue-template-compiler": "^2.7.16"
+    },
+    "overrides": {
+        "node-sass": "npm:sass@1.32.13"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^20.0.0",

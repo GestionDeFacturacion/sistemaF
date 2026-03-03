@@ -108,7 +108,6 @@
     @if ($vc_company->favicon)
     <link rel="shortcut icon" type="image/png" href="{{ asset($vc_company->favicon) }}"/>
     @endif
-    <script defer src="{{ mix('js/app.js') }}"></script>
 
 </head>
 <body class="pr-0">
@@ -180,8 +179,9 @@
 
     @stack('scripts')
 
-    <script src="{{ asset('js/manifest.js') }}"></script>
-    <script src="{{ asset('js/vendor.js') }}"></script>
+    <script src="{{ mix('js/manifest.js') }}"></script>
+    <script src="{{ mix('js/vendor.js') }}"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
     <!-- Theme Base, Components and Settings -->
     <script src="{{asset('porto-light/js/theme.js')}}"></script>
 
