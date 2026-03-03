@@ -59,7 +59,13 @@
                         </div>
                     </div> 
 
-
+                    <div class="col-md-3">
+                        <div class="form-group" :class="{'has-danger': errors.registration_mtc}">
+                            <label class="control-label">N° Registro MTC</label>
+                            <el-input v-model="transport.registration_mtc"></el-input>
+                            <small class="form-control-feedback" v-if="errors.registration_mtc" v-text="errors.registration_mtc[0]"></small>
+                        </div>
+                    </div>
 
                     <div class="col-lg-6">
                         <div class="form-group" :class="{'has-danger': errors.origin_district_id}">

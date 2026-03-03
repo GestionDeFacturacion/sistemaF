@@ -20,7 +20,8 @@ class DocumentTransport extends ModelTenant
         'destinatation_district_id',
         'destinatation_address',
         'start_date',
-        'start_time', 
+        'start_time',
+        'registration_mtc',
     ];
   
     public function getOriginDistrictIdAttribute($value)

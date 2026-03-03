@@ -28,6 +28,7 @@ class TenantDocumentTransportsTable extends Migration
             $table->string('destinatation_address')->nullable();
             $table->date('start_date')->nullable();
             $table->time('start_time')->nullable();
+            $table->string('registration_mtc')->nullable();
             $table->timestamps();
 
             $table->foreign('document_id')->references('id')->on('documents')->onDelete('cascade');

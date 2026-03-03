@@ -2007,10 +2007,21 @@ export default {
 
             if (this.has_data_detraction) {
 
-                let legend_value = (this.form.operation_type_id === '1001') ? 'Operación sujeta a detracción' : 'Operación Sujeta a Detracción - Servicios de Transporte - Carga'
+                let legend_value = 'Operación sujeta a detracción'
+                if (this.form.operation_type_id === '1003') {
+                    legend_value = 'Operación Sujeta a Detracción - Servicios de Transporte de Pasajeros'
+                } else if (this.form.operation_type_id === '1004') {
+                    legend_value = 'Operación Sujeta a Detracción - Servicios de Transporte - Carga'
+                }
                 let legend = await _.find(this.form.legends, {'code': '2006'})
                 if (!legend) this.form.legends.push({code: '2006', value: legend_value})
 
+            }
+
+            // Leyenda 3006: Número Registro MTC (independiente de detracción)
+            if (this.form.transport && this.form.transport.registration_mtc) {
+                let legend3006 = await _.find(this.form.legends, {'code': '3006'})
+                if (!legend3006) this.form.legends.push({code: '3006', value: this.form.transport.registration_mtc})
             }
 
         },
@@ -2505,6 +2516,15 @@ export default {
         },
         addDocumentTransport(transport) {
             this.form.transport = transport
+
+            // Leyenda 3006: Número Registro MTC (aplica siempre que haya datos de transporte)
+            _.remove(this.form.legends, {'code': '3006'})
+            if (transport.registration_mtc) {
+                this.form.legends.push({
+                    code: '3006',
+                    value: transport.registration_mtc
+                })
+            }
         },
         changeIsReceivable() {
 
@@ -2745,6 +2765,16 @@ export default {
                 this.form.detraction.bank_account = this.company.detraction_account
                 // this.form.detraction.detraction_type_id = undefined
 
+            } else if (this.form.operation_type_id === '1003') {
+
+                this.showDialogDocumentDetraction = true
+                let legend2006 = await _.find(this.form.legends, {'code': '2006'})
+                if (!legend2006) this.form.legends.push({
+                    code: '2006',
+                    value: 'Operación Sujeta a Detracción - Servicios de Transporte de Pasajeros'
+                })
+                this.form.detraction.bank_account = this.company.detraction_account
+
             } else if (this.form.operation_type_id === '1004') {
 
                 this.showDialogDocumentDetraction = true
@@ -2758,6 +2788,7 @@ export default {
             } else {
 
                 _.remove(this.form.legends, {'code': '2006'})
+                _.remove(this.form.legends, {'code': '3006'})
                 this.form.detraction = {}
 
             }

@@ -25,6 +25,7 @@ class DocumentTransportRequest extends FormRequest
             'destinatation_address'=> ['required'], 
             'start_date'=> ['required'], 
             'start_time'=> ['required'], 
+            'registration_mtc' => ['required'],
         ];
     }
 }
