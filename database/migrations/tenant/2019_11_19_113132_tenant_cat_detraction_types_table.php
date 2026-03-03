@@ -39,7 +39,7 @@ class TenantCatDetractionTypesTable extends Migration
             ['id' => '023', 'operation_type_id' => '1001', 'active' =>true, 'percentage' => 4, 'description' => 'Leche'],
             ['id' => '025', 'operation_type_id' => '1001', 'active' =>true, 'percentage' => 10, 'description' => 'Fabricación de bienes por encargo'],
             // ['id' => '027', 'operation_type_id' => '1004', 'active' =>false, 'percentage' => 4, 'description' => 'Servicio de transporte de carga'],
-            // ['id' => '028', 'operation_type_id' => '1003', 'active' =>false, 'percentage' => 0, 'description' => 'Transporte de pasajeros'],
+            ['id' => '028', 'operation_type_id' => '1003', 'active' =>true, 'percentage' => 0, 'description' => 'Transporte de pasajeros'],
             
         ]);
 
