@@ -40,7 +40,7 @@ class ActionInput
             return $configuration->send_auto && $send_xml_signed;
         }
 
-        return true;
+        return $configuration->isAutoSendDispatchsToSunat() && $send_xml_signed; // cuando auto_send_dispatchs_to_sunat esté en false en la BD, la guía se genera (XML + PDF) pero no se envía a SUNAT
     }
 
     private static function formatPdf($actions, $inputs, $configuration)

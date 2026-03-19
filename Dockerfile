@@ -28,6 +28,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     bcmath \
     soap
 
+# Desactivar short_open_tag para evitar conflicto con <?xml en templates Blade
+RUN echo "short_open_tag = Off" > /usr/local/etc/php/conf.d/custom.ini
+
 # Habilitar módulos Apache
 RUN a2enmod rewrite ssl
 

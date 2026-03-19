@@ -129,3 +129,42 @@ Docker no puede sobrescribir la carpeta `public/storage` creada por Windows.
 ### Error "Database [tenant] not configured"
 El sistema no reconoce la URL.
 **Solución:** Asegúrate de estar entrando por `http://facturadorpro5.test` y NO por `localhost`. Revisa que hiciste el **Paso 3 (Hosts)**.
+
+### Error "syntax error, unexpected 'version' (T_STRING)" en dispatch.blade.php
+PHP tiene `short_open_tag = On` por defecto, lo que causa que `<?xml` se interprete como código PHP.
+**Solución:** Ya está corregido en el Dockerfile con:
+```dockerfile
+RUN echo "short_open_tag = Off" > /usr/local/etc/php/conf.d/custom.ini
+```
+Si el error aparece, reconstruir el contenedor: `docker-compose up --build -d`
+
+### Error "SAVEPOINT trans2 does not exist" al crear tenants
+Ver sección **¿Por qué MariaDB en vez de MySQL?** más abajo.
+
+---
+
+## 🗄️ ¿Por qué MariaDB en vez de MySQL?
+
+El `docker-compose.yml` usa la imagen `mariadb:10.4` en vez de `mysql:5.7`. **Esto es intencional.**
+
+### El problema con MySQL 5.7 en Docker
+
+Al crear un tenant nuevo, el paquete `hyn/multi-tenant` ejecuta operaciones DDL (`CREATE DATABASE`, `CREATE TABLE`, `CREATE USER`) dentro de una transacción de Laravel. MySQL 5.7 hace **implicit commit** en toda operación DDL, lo que rompe los savepoints de la transacción y genera:
+
+```
+SQLSTATE[42000]: Syntax error or access violation: 1305 SAVEPOINT trans2 does not exist
+```
+
+### ¿Por qué MariaDB funciona?
+
+MariaDB maneja los savepoints de forma diferente — no rompe la transacción al ejecutar DDL. Es **wire-compatible** con MySQL 5.7:
+- Mismo protocolo de red
+- Mismo puerto (3306)
+- Mismo driver PHP (`pdo_mysql`)
+- Misma sintaxis SQL
+
+De hecho, Laragon también usa MariaDB internamente aunque lo muestre como "MySQL".
+
+### ¿No se puede arreglar con configuración de MySQL?
+
+**No.** El implicit commit en DDL es comportamiento fundamental de MySQL y **no se puede desactivar** con ningún parámetro de configuración (`my.cnf` o variables de servidor).

@@ -11,3 +11,4 @@ bootstrap/cache/*
 .idea
 .vscode
 *.log
+public/storage

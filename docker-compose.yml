@@ -1,16 +1,14 @@
 version: '3.8'
 
 services:
-  # Servicio de MySQL 5.7
+  # Servicio de MariaDB 10.4 (compatible con MySQL 5.7, maneja DDL en transacciones correctamente)
   mysql:
-    image: mysql:5.7
+    image: mariadb:10.4
     container_name: facturadorpro5_mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: tenancy
-      MYSQL_USER: facturador
-      MYSQL_PASSWORD: facturador123
     ports:
       - "3306:3306"
     volumes:
@@ -36,14 +34,14 @@ services:
       DB_HOST: mysql
       DB_PORT: 3306
       DB_DATABASE: tenancy
-      DB_USERNAME: facturador
-      DB_PASSWORD: facturador123
+      DB_USERNAME: root
+      DB_PASSWORD: root
     networks:
       - facturador_network
     command: >
       bash -c "
       composer install --no-interaction --prefer-dist --optimize-autoloader &&
-      php artisan config:cache &&
+      php artisan config:clear &&
       apache2-foreground
       "
 
